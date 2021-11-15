@@ -72,3 +72,60 @@ ggplot(data = homes_sub, aes(x = SqFt, y = Price)) +
   geom_smooth(method = lm)
 ```
 
+### model the relationship with home price as dependent variable
+
+```{r}
+# linear model with ALL factors - but wait!  some of them are not independent
+homes_lm1 <- lm(Price ~ City + Bedrooms + Bathrooms + SqFt + PricePerSqFt + Status, data = homes_sub)
+homes_lm1
+
+# make a subset DF that only contains quantitative variables
+homes_quant <- homes_sub %>% 
+  select(Price:PricePerSqFt)
+
+homes_cor <- cor(homes_quant)
+homes_cor
+
+# corrplot()
+corrplot(homes_cor, method = 'ellipse')
+
+# how would I explore diagnostics?
+
+plot(homes_lm1)
+```
+
+## try another model (simplify)
+
+```{r}
+homes_lm2 <- lm(Price ~ City + SqFt + Status, data = homes_sub)
+
+# or we can just call this in the console
+homes_lm2
+
+plot(homes_lm2)
+
+modelsummary(homes_lm2)
+
+summary(homes_lm2)
+```
+
+
+## try another permutation of this model that might make sense
+
+```{r}
+homes_lm3 <- lm(Price ~ City + Bedrooms + SqFt + Status, data = homes_sub)
+homes_lm3
+
+summary(homes_lm3)
+```
+
+
+### use the AIC to find the model with the better fit - lower = better between fit + less complexity
+
+```{r}
+AIC(homes_lm1)
+AIC(homes_lm2)
+AIC(homes_lm3)
+```
+
+
