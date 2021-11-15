@@ -149,3 +149,4 @@ use broom::augment()
 homes_predicted <- augment(homes_lm1)
 ```
 
+## use the predict function to try out your model on new scenarios
