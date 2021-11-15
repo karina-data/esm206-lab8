@@ -113,10 +113,15 @@ summary(homes_lm2)
 ## try another permutation of this model that might make sense
 
 ```{r}
-homes_lm3 <- lm(Price ~ City + Bedrooms + SqFt + Status, data = homes_sub)
+homes_lm3 <- lm(Price ~ City + SqFt + Status, data = homes_sub)
 homes_lm3
 
 summary(homes_lm3)
+
+homes_lm4 <- lm(Price ~ City + SqFt, data = homes_sub)
+homes_lm4
+
+summary(homes_lm4)
 ```
 
 
@@ -126,6 +131,21 @@ summary(homes_lm3)
 AIC(homes_lm1)
 AIC(homes_lm2)
 AIC(homes_lm3)
+AIC(homes_lm4)
 ```
 
+use modelsummary() to show outputs side-by-side:
+(wants it as a list)
+
+```{r}
+modelsummary(list(homes_lm1, homes_lm2, homes_lm3))
+```
+
+###  start making predictions 
+
+use broom::augment()
+
+```{r}
+homes_predicted <- augment(homes_lm1)
+```
 
