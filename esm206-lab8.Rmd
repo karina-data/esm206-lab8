@@ -1,0 +1,74 @@
+---
+title: "ESM 206 - Lab 8"
+author: "Karina Johnston"
+date: "11/15/2021"
+output: 
+  html_document: 
+    toc: yes
+    theme: cerulean
+---
+
+```{r setup, include=FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+# attach packages
+library(tidyverse)
+library(here)
+library(broom)
+library(corrplot)
+library(stargazer)
+library(modelsummary)
+```
+
+Contains housing price information for 780 homes on central coast of CA.
+
+```{r}
+homes <- read_csv(here("data", "slo_homes.csv"))
+```
+
+remember use unique function to view specific column variables
+
+```{r}
+unique(homes$City)
+```
+
+a little bit of cleaning: make a subset of homes, where city is SLO, Arroyo Grande, Atascadero, Santa Maria-Orcutt 
+
+```{r}
+homes_sub <- homes %>% 
+  filter(City %in% c("Arroyo Grande", "San Luis Obispo", "Atascadero", "Santa Maria-Orcutt"))
+```
+
+## do a little exploring...
+
+summary statistics for home price based on city and sale status:
+
+mean and SD for home price, grouped by city and sale status
+
+```{r}
+summary_table <- homes_sub %>% 
+  group_by(City, Status) %>% 
+  summarize(mean_price = mean(Price, na.rm = TRUE), 
+            sd_price = sd(Price, na.rm = TRUE))
+summary_table
+
+# actually, I don't want to run this code when it knits - it's just for me
+# use "eval = FALSE" in the code header!
+
+# guideline for within aes is if it is referring to a variable!  If referring to a constant, then outside aes
+ggplot(data = homes_sub, aes(x = Price)) +
+  geom_density(aes(color = City, fill = City), alpha = 0.3) +
+  theme_classic() +
+  scale_x_continuous(limits = c(0, 3e6))
+```
+
+explore the relationship between square footage and home price
+change point COLOR by city and SHAPE by sale status
+
+```{r}
+ggplot(data = homes_sub, aes(x = SqFt, y = Price)) +
+  geom_point(aes(color = City, shape = Status)) +
+  theme_classic() +
+  geom_smooth(method = lm)
+```
+
